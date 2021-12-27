@@ -1,0 +1,33 @@
+.map-content {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 5px;
+}
+
+.preview {
+    overflow-y: scroll;
+    height: 400px;
+    margin-left: 5px;
+    padding-left: 5px;
+    width: 300px;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+}
+
+#map {
+    width: 600px;
+}
+
+#area {
+    overflow-y: scroll;
+    height: 400px;
+    margin-left: 5px;
+    padding-left: 5px;
+    width: 300px;
+}

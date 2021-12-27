@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Аренда на карте{% endblock %}
+
+{% block content %}
+<!-- <script src="https://maps.googleapis.com/maps/api/js"></script>
+<script src="{% static 'js/gmaps.js' %}"> </script>
+<script src="{% static 'js/map.js' %}"> </script> -->
+
+
+<div class="content">
+    <div class="map-content">
+        <div id="map">
+            <script>
+                let map;
+
+                function initMap() {
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        center: { lat: 50.465555, lng: 30.518928 },
+                        zoom: 10,
+                    });
+                    try {
+                        fetch('http://localhost:80/api/ads/')
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((data) => {
+                            data.forEach(e => {
+                                geocoder = new google.maps.Geocoder();
+                                let location = geocoder.geocode({address: e.address },
+                                    function(results, status) {
+                                    if (status == 'OK') {
+                                        let latlng = results[0].geometry.location;
+                                        let marker = new google.maps.Marker({
+                                            map: map,
+                                            position: results[0].geometry.location
+                                        });
+                                        marker.addListener('click', () => {
+                                            document.getElementById('photo').innerHTML = "<img src='"+e.photo+"'>";
+                                            document.getElementById('title').innerHTML = e.title;
+                                            document.getElementById('about').innerHTML = e.description;
+                                        });
+                                        map.addListener('zoom_changed', () => {
+                                            if((map.getBounds().contains(marker.getPosition()))) {
+                                                document.getElementById('area').innerHTML = "<p>Объявления в этой области</p>";
+                                                document.getElementById('area').innerHTML += "<img src='"+e.photo+"'>"+"<p>"+e.title+"</p>";
+                                            } 
+                                        });
+                                        // comment
+                                    }
+                                });
+                            });
+                        });
+                    }
+                    catch {
+                        fetch('https://b0c2-109-122-31-138.ngrok.io/api/ads/', {mode: 'no-cors'})
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((data) => {
+                            data.forEach(e => {
+                                geocoder = new google.maps.Geocoder();
+                                let location = geocoder.geocode({address: e.address },
+                                    function(results, status) {
+                                    if (status == 'OK') {
+                                        let latlng = results[0].geometry.location;
+                                        let marker = new google.maps.Marker({
+                                            map: map,
+                                            position: results[0].geometry.location
+                                        });
+                                        marker.addListener('click', () => {
+                                            document.getElementById('photo').innerHTML = "<img src='"+e.photo+"'>";
+                                            document.getElementById('title').innerHTML = e.title;
+                                            document.getElementById('about').innerHTML = e.description;
+                                        });
+                                        map.addListener('zoom_changed', () => {
+                                            if((map.getBounds().contains(marker.getPosition()))) {
+                                                document.getElementById('area').innerHTML = "<p>Объявления в этой области</p>";
+                                                document.getElementById('area').innerHTML += "<img src='"+e.photo+"'>"+"<p>"+e.title+"</p>";
+                                            } 
+                                        });
+                                        // comment
+                                    }
+                                });
+                            });
+                        });
+                    }
+                }
+
+
+            </script>
+        </div>
+
+        <div class="preview">
+            <p>Все объявления</p>
+            {% for ad in ads %}
+                <img src="{% if ad.photo %}{{ ad.photo.url }}{% endif %}" alt="" style="display: block !important;">
+                <p>{{ ad.title }}</p>
+            {% endfor %}
+        </div>
+        <div class="chosen">
+            <p>Выбранное объявление</p>
+            <div id="photo"></div><div id="title"></div><div id="about"></div>
+        </div>
+        <div id="area">
+            <p>Объявления в этой области</p>
+        </div>
+    </div>
+    <div class="new-ad">
+        <h3>Создать объявление</h3>
+        <form action="{% url 'index_page' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Добавить объявление</button>
+        </form>
+    </div>
+</div>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9r05JwSt7yCSw8xromdWNRpU3mdnnOJU&callback=initMap"></script>
+{% endblock %}
